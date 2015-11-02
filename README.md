@@ -21,7 +21,17 @@
 </#assets>
 ```
 
-file: 需要压缩的js、css列表，#开头表注释
+file: 需要压缩的js、css列表
+
+assets.jjs示例：
+```
+#开头表注释
+/js/jquery.min.js
+/js/jquery-ui.min.js
+/js/modernizr.min.js
+/js/superfish.min.js
+/js/application.js
+```
 
 ## 文章
 [对css，js压缩之combo以及七牛cdn的思考:http://blog.dreamlu.net/blog/47](http://blog.dreamlu.net/blog/47)

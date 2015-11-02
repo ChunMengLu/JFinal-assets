@@ -29,11 +29,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.jfinal</groupId>
-			<artifactId>jfinal</artifactId>
-			<version>${jfinal.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jfinal</groupId>
 			<artifactId>jetty-server</artifactId>
 			<version>8.1.8</version>
 			<scope>provided</scope>
@@ -43,6 +38,11 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.jfinal</groupId>
+			<artifactId>jfinal</artifactId>
+			<version>${jfinal.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.ibeetl</groupId>

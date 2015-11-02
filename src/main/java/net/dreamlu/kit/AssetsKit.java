@@ -143,6 +143,10 @@ public class AssetsKit {
 			if (StrKit.isBlank(string)) {
 				continue;
 			}
+			// #开头的行注释
+			if (string.startsWith("#")) {
+				continue;
+			}
 			String filePath = PathKit.getWebRootPath() + string;
 			File file = new File(filePath);
 			if (!file.exists()) {

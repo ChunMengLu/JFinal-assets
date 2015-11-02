@@ -1,6 +1,5 @@
 package net.dreamlu.ui.beetl;
 
-import java.io.IOException;
 import java.util.Map;
 
 import org.beetl.core.GeneralVarTagBinding;
@@ -10,9 +9,10 @@ import com.jfinal.kit.StrKit;
 import net.dreamlu.kit.AssetsKit;
 
 /**
- * <#assets file="">
- * 
- * <#/assets>
+ * 使用方式
+ *<#assets file="/assets/assets.jjs"; src>
+ *    <script src="${ctxPath}${src}"></script>
+ *</#assets>
  */
 public class AssetsTag extends GeneralVarTagBinding {
 	
@@ -29,10 +29,9 @@ public class AssetsTag extends GeneralVarTagBinding {
 			throw new RuntimeException("assets tag attribute file can not be null" );
 		}
 		try {
-			String src = AssetsKit.combo(fileName);
-			this.binds(src);
+			this.binds(AssetsKit.combo(fileName));
 			this.doBodyRender();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

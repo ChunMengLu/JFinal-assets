@@ -44,8 +44,9 @@ public class AssetsKit {
 	 * @param isCss
 	 * @param out
 	 * @return
+	 * @throws IOException 
 	 */
-	private static boolean compressorHelper(List<String> fileList, boolean isCss, Writer out) {
+	private static boolean compressorHelper(List<String> fileList, boolean isCss, Writer out) throws IOException {
 		Reader in = null;
 		try {
 			if (isCss) {
@@ -100,9 +101,7 @@ public class AssetsKit {
 			out.flush();
 			return true;
 		}catch(IOException e){
-			e.printStackTrace();
-			log.error(e.getMessage());
-			return false;
+			throw e;
 		}finally{
 			IOUtils.closeQuietly(in);
 			IOUtils.closeQuietly(out);
@@ -151,10 +150,9 @@ public class AssetsKit {
 			}
 			String content = FileUtils.readFileToString(file, CHARSET);
 			fileMd5s.append(HashKit.md5(content));
-		}		
+		}
 		// 文件更改时间集合hex,
 		String hex = HashKit.md5(fileMd5s.toString()).substring(8, 16);
-		
 		boolean isCss = true;
 		if (fileName.endsWith(".jjs")) {
 			isCss = false;
@@ -167,9 +165,14 @@ public class AssetsKit {
 		if (file.exists()) {
 			return newFileName;
 		}
-		// 将合并的结果写入文件
-		Writer out = new OutputStreamWriter(new FileOutputStream(newPath), CHARSET);
-		compressorHelper(list, isCss, out);
+		// 将合并的结果写入文件，异常时将文件删除
+		try {
+			Writer out = new OutputStreamWriter(new FileOutputStream(newPath), CHARSET);
+			compressorHelper(list, isCss, out);
+		} catch (Exception e) {
+			FileUtils.deleteQuietly(file);
+			throw new RuntimeException(isCss ? "css" : "js" + " 压缩异常，请检查时候有依赖问题！");
+		}
 		return newFileName;
 	}
 	

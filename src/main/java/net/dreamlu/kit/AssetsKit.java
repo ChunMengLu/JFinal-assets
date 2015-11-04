@@ -40,13 +40,12 @@ public class AssetsKit {
 	
 	/**
 	 * 压缩css,js帮助
-	 * @param queryString
-	 * @param isCss
-	 * @param out
-	 * @return
-	 * @throws IOException 
+	 * @param fileList 合并压缩的文件列表
+	 * @param isCss 是否是css
+	 * @param out 输出流
+	 * @throws IOException Io异常
 	 */
-	private static boolean compressorHelper(List<String> fileList, boolean isCss, Writer out) throws IOException {
+	private static void compressorHelper(List<String> fileList, boolean isCss, Writer out) throws IOException {
 		Reader in = null;
 		try {
 			if (isCss) {
@@ -99,7 +98,6 @@ public class AssetsKit {
 				}
 			}
 			out.flush();
-			return true;
 		}catch(IOException e){
 			throw e;
 		}finally{
@@ -110,8 +108,9 @@ public class AssetsKit {
 	
 	/**
 	 * 将css文件里的图片相对路径修改为绝对路径
-	 * @param css
-	 * @return
+	 * @param content 内容
+	 * @param path 路径
+	 * @return String css
 	 */
 	private static String repairCss(String content, String path){
 		Pattern p = Pattern.compile("url\\([\\s]*['\"]?((?!['\"]?https?://|['\"]?data:|['\"]?/).*?)['\"]?[\\s]*\\)"); // 感谢Code Life(程式人生)的正则
@@ -129,9 +128,9 @@ public class AssetsKit {
 	
 	/**
 	 * 压缩工具
-	 * @param fileName
-	 * @return
-	 * @throws IOException
+	 * @param fileName 待压缩的文件列表
+	 * @return String 返回压缩完成之后的路径
+	 * @throws IOException 文件不存在时异常
 	 */
 	public static String combo(String fileName) throws IOException {
 		String rootPath = PathKit.getWebRootPath();

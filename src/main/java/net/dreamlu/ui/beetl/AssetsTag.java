@@ -9,10 +9,7 @@ import com.jfinal.kit.StrKit;
 import net.dreamlu.kit.AssetsKit;
 
 /**
- * 使用方式
- *<#assets file="/assets/assets.jjs"; src>
- *    <script src="${ctxPath}${src}"></script>
- *</#assets>
+ * beetl合并压缩标签
  */
 public class AssetsTag extends GeneralVarTagBinding {
 	

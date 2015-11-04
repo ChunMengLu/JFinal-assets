@@ -11,8 +11,20 @@ Jfinal框架jsp、beetl模版，js、css在线合并压缩插件！
 3. commons-io
 
 ## 使用
-###Beetl中使用
+```
+<dependency>
+    <groupId>net.dreamlu</groupId>
+    <artifactId>JFinal-assets</artifactId>
+    <version>0.0.1</version>
+</dependency>
+```
 
+###Beetl中使用
+###自定义标签
+```
+##自定义标签
+TAG.assets = net.dreamlu.ui.beetl.AssetsTag
+```
 ###js
 ```
 <#assets file="/assets/assets.jjs"; src>

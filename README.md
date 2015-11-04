@@ -42,7 +42,7 @@ assets.jjs示例：
 
 首先、导入标签库
 ```
-<%@ taglib prefix="x" uri="http://www.dreamlu.net/tags/assets.tld" %>
+<%@ taglib prefix="assets" uri="http://www.dreamlu.net/tags/assets.tld" %>
 ```
 
 同理如beetl

@@ -12,6 +12,7 @@ import net.dreamlu.kit.AssetsKit;
 
 /**
  * Jsp合并压缩标签
+ * @author L.cm
  */
 public class AssetsTag extends TagSupport {
 
@@ -30,10 +31,10 @@ public class AssetsTag extends TagSupport {
 	@Override
 	public int doStartTag() throws JspException {
 		if (StrKit.isBlank(var)) {
-			throw new JspException("assets tag attribute var can not be null");
+			throw new JspException("assets tag attribute var can not be blank!");
 		}
 		if (StrKit.isBlank(file)) {
-			throw new JspException("assets tag attribute file can not be null");
+			throw new JspException("assets tag attribute file can not be blank!");
 		}
 		try {
 			this.pageContext.setAttribute(var, AssetsKit.combo(file));

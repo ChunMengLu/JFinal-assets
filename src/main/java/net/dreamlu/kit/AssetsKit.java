@@ -30,7 +30,6 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 /**
  * YUICompressor压缩帮助类
  * @author L.cm
- * @date 2013-7-1 下午1:00:28
  */
 public class AssetsKit {
 	

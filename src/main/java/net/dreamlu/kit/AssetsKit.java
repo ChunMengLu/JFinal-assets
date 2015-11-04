@@ -2,7 +2,6 @@ package net.dreamlu.kit;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,8 +33,8 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 public class AssetsKit {
 	
 	private static final Logger log = Logger.getLogger(AssetsKit.class);
-	public static final String CHARSET = "UTF-8";
-	public static final String JS_EXT = ".js", CSS_EXT = ".css";
+	private static final String CHARSET = "UTF-8";
+	private static final String JS_EXT = ".js", CSS_EXT = ".css";
 	
 	/**
 	 * 压缩css,js帮助
@@ -127,15 +126,23 @@ public class AssetsKit {
 	
 	/**
 	 * 压缩工具
-	 * @param fileName 待压缩的文件列表
+	 * @param fileName 待压缩的文件列表文件 /assets/assets.jjs
 	 * @return String 返回压缩完成之后的路径
 	 * @throws IOException 文件不存在时异常
 	 */
 	public static String combo(String fileName) throws IOException {
 		String rootPath = PathKit.getWebRootPath();
-		String comboName = fileName.substring(0, fileName.indexOf('.')); // /assets/assets-web
+		// 路径判读
+		if (!fileName.startsWith("/")) {
+			fileName = "/" + fileName;
+		}
+		File assetsConfig = new File(rootPath + fileName);
+		// 待压缩的文件列表不存在时抛出异常
+		if (!assetsConfig.exists()) {
+			throw new IOException(fileName + " not found...");
+		}
 		// 读取文件中的js或者css路径
-		List<String> list = FileUtils.readLines(new File(rootPath + fileName), CHARSET);
+		List<String> list = FileUtils.readLines(assetsConfig, CHARSET);
 		StringBuilder fileMd5s = new StringBuilder(); // 文件更改时间拼接
 		for (String string : list) {
 			if (StrKit.isBlank(string)) {
@@ -148,17 +155,18 @@ public class AssetsKit {
 			String filePath = PathKit.getWebRootPath() + string;
 			File file = new File(filePath);
 			if (!file.exists()) {
-				throw new FileNotFoundException(file.getName() + " not found...");
+				throw new IOException(file.getName() + " not found...");
 			}
 			String content = FileUtils.readFileToString(file, CHARSET);
 			fileMd5s.append(HashKit.md5(content));
 		}
-		// 文件更改时间集合hex,
+		// 文件更改时间集合hex，MD5取中间8位
 		String hex = HashKit.md5(fileMd5s.toString()).substring(8, 16);
 		boolean isCss = true;
 		if (fileName.endsWith(".jjs")) {
 			isCss = false;
 		}
+		String comboName = fileName.substring(0, fileName.indexOf('.')); // 
 		String newFileName = comboName + '-'  + hex + (isCss ? CSS_EXT : JS_EXT);
 		
 		String newPath = rootPath + newFileName;
@@ -173,7 +181,7 @@ public class AssetsKit {
 			compressorHelper(list, isCss, out);
 		} catch (Exception e) {
 			FileUtils.deleteQuietly(file);
-			throw new RuntimeException(isCss ? "css" : "js" + " 压缩异常，请检查时候有依赖问题！");
+			throw new RuntimeException(fileName + " 压缩异常，请检查是否有依赖问题！");
 		}
 		return newFileName;
 	}

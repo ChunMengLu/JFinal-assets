@@ -8,15 +8,12 @@
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
-	<name>JFinal-beetl-assets</name>
+	<name>JFinal-assets</name>
 	<url>http://www.dreamlu.net</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<jfinal.version>2.0</jfinal.version>
-		<yuicompressor.version>2.4.8</yuicompressor.version>
-		<commons.io.version>2.4</commons.io.version>
 	</properties>
 
 	<licenses>
@@ -34,9 +31,9 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:git@git.oschina.net/596392912/JFinal-beetl-assets</connection>
-		<developerConnection>scm:git:git@git.oschina.net/596392912/JFinal-beetl-assets.git</developerConnection>
-		<url>git@git.oschina.net/596392912/JFinal-beetl-assets.git</url>
+		<connection>scm:git:git@git.oschina.net/596392912/JFinal-assets</connection>
+		<developerConnection>scm:git:git@git.oschina.net/596392912/JFinal-assets.git</developerConnection>
+		<url>git@git.oschina.net/596392912/JFinal-assets.git</url>
 	</scm>
 
 	<dependencies>
@@ -67,17 +64,17 @@
 		<dependency>
 			<groupId>com.jfinal</groupId>
 			<artifactId>jfinal</artifactId>
-			<version>${jfinal.version}</version>
+			<version>2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.yahoo.platform.yui</groupId>
 			<artifactId>yuicompressor</artifactId>
-			<version>${yuicompressor.version}</version>
+			<version>2.4.8</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>${commons.io.version}</version>
+			<version>2.4</version>
 		</dependency>
 	</dependencies>
 

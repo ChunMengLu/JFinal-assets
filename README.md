@@ -12,6 +12,7 @@ Jfinal框架jsp、beetl模版，js、css在线合并压缩插件！
 
 ## 使用
 1. Beetl中
+
 ###js
 ```
 <#assets file="/assets/assets.jjs"; src>
@@ -30,6 +31,7 @@ file: 需要压缩的js、css列表
 assets.jjs示例：
 ```
 2. JSP中
+
 首先、导入标签库
 <%@ taglib prefix="x" uri="http://www.dreamlu.net/tags/assets.tld" %>
 

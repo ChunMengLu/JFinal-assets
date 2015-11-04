@@ -11,7 +11,7 @@ Jfinal框架jsp、beetl模版，js、css在线合并压缩插件！
 3. commons-io
 
 ## 使用
-1. Beetl中
+###Beetl中使用
 
 ###js
 ```
@@ -38,7 +38,7 @@ assets.jjs示例：
 /js/application.js
 ```
 
-2. JSP中
+###JSP中使用
 
 首先、导入标签库
 ```

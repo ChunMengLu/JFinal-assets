@@ -31,7 +31,7 @@ public class AssetsTag extends GeneralVarTagBinding {
 			this.binds(AssetsKit.combo(fileName));
 			this.doBodyRender();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 	

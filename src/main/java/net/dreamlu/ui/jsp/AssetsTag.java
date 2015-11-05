@@ -38,10 +38,10 @@ public class AssetsTag extends TagSupport {
 		}
 		try {
 			this.pageContext.setAttribute(var, AssetsKit.combo(file));
+			return EVAL_BODY_INCLUDE;
 		} catch (IOException e) {
 			throw new JspException(e);
 		}
-		return EVAL_BODY_INCLUDE;
 	}
 
 	@Override

@@ -15,7 +15,7 @@ Jfinal框架jsp、beetl模版，js、css在线合并压缩插件！
 <dependency>
     <groupId>net.dreamlu</groupId>
     <artifactId>JFinal-assets</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 

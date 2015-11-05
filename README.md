@@ -1,5 +1,5 @@
 ## 说明
-Jfinal框架jsp、beetl模版，js、css在线合并压缩插件！
+JFinal框架结合jsp、beetl、freemarker模版的js、css在线合并压缩插件！
 
 结合CDN使用效果更佳哦
 

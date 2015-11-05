@@ -60,8 +60,21 @@ assets.jjs示例：
 同理如beetl
 ```
 <assets:assets var="x" file="/assets/assets.jjs">
-	<script src="${x }" type="text/javascript" ></script>
+	<script src="${x}" type="text/javascript" ></script>
 </assets:assets>
+```
+###freemarker中使用
+
+首先、配置（可在JFinal的config中完成）
+``` 
+FreeMarkerRender.getConfiguration().setSharedVariable("assets", new AssetsDirective());
+```
+
+同理如beetl
+```
+<@assets var="x" file="/assets/assets.jjs">
+	<script src="${x}" type="text/javascript" ></script>
+</@assets>
 ```
 
 ## 文章

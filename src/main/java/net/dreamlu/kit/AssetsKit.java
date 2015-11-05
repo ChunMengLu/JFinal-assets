@@ -148,11 +148,17 @@ public class AssetsKit {
 			if (StrKit.isBlank(string)) {
 				continue;
 			}
+			// 去除首尾空格
+			string = string.trim();
 			// #开头的行注释
 			if (string.startsWith("#")) {
 				continue;
 			}
-			String filePath = PathKit.getWebRootPath() + string;
+			// 对错误地址修复
+			if (!string.startsWith("/")) {
+				string = "/" + string;
+			}
+			String filePath = rootPath + string;
 			File file = new File(filePath);
 			if (!file.exists()) {
 				throw new IOException(file.getName() + " not found...");
@@ -166,7 +172,8 @@ public class AssetsKit {
 		if (fileName.endsWith(".jjs")) {
 			isCss = false;
 		}
-		String comboName = fileName.substring(0, fileName.indexOf('.')); // 
+		// /assets/assets.jjs
+		String comboName = fileName.substring(0, fileName.indexOf('.'));
 		String newFileName = comboName + '-'  + hex + (isCss ? CSS_EXT : JS_EXT);
 		
 		String newPath = rootPath + newFileName;

@@ -22,7 +22,7 @@ import org.mozilla.javascript.EvaluatorException;
 import com.jfinal.kit.HashKit;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.StrKit;
-import com.jfinal.log.Logger;
+import com.jfinal.log.Log;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
@@ -32,7 +32,7 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
  */
 public class AssetsKit {
 	
-	private static final Logger log = Logger.getLogger(AssetsKit.class);
+	private static final Log log = Log.getLog(AssetsKit.class);
 	private static final String CHARSET = "UTF-8";
 	private static final String JS_EXT = ".js", CSS_EXT = ".css";
 	

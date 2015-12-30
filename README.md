@@ -80,6 +80,10 @@ FreeMarkerRender.getConfiguration().setSharedVariable("assets", new AssetsDirect
 ## 文章
 [对css，js压缩之combo以及七牛cdn的思考:http://blog.dreamlu.net/blog/47](http://blog.dreamlu.net/blog/47)
 
+## 更新说明
+>## 2015-12-30 v0.0.3
+>1. 升级到JFinal2.1，JFinal低版本用户请使用`v0.0.3`
+
 ## 交流群
 如梦技术：[`237587118`](http://shang.qq.com/wpa/qunwpa?idkey=f78fcb750b4f72c92ff4d375d2884dd69b552301a1f2681af956bd32700eb2c0)
 

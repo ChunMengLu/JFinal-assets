@@ -87,6 +87,14 @@ FreeMarkerRender.getConfiguration().setSharedVariable("assets", new AssetsDirect
 ## 交流群
 如梦技术：[`237587118`](http://shang.qq.com/wpa/qunwpa?idkey=f78fcb750b4f72c92ff4d375d2884dd69b552301a1f2681af956bd32700eb2c0)
 
+## 捐助共勉
+<img src="http://soft.dreamlu.net/weixin-9.jpg" width = "200" alt="微信捐助" align=center />
+<img src="http://soft.dreamlu.net/weixin-19.jpg" width = "200" alt="微信捐助" align=center />
+<img src="http://soft.dreamlu.net/alipay.png" width = "200" alt="支付宝捐助" align=center />
+
+<img src="http://soft.dreamlu.net/qq-9.jpg" width = "200" alt="QQ捐助" align=center />
+<img src="http://soft.dreamlu.net/qq-19.jpg" width = "200" alt="QQ捐助" align=center />
+
 ## License
 
 ( The MIT License )

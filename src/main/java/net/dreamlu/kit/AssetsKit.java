@@ -1,14 +1,8 @@
 package net.dreamlu.kit;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.Writer;
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -17,6 +11,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.FileFileFilter;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
 
@@ -26,6 +21,7 @@ import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
+import sun.security.pkcs.EncodingException;
 
 /**
  * YUICompressor压缩帮助类
@@ -36,7 +32,7 @@ public class AssetsKit {
 	private static final Log log = Log.getLog(AssetsKit.class);
 	private static final String CHARSET = "UTF-8";
 	private static final String JS_EXT = ".js", CSS_EXT = ".css";
-	private static final List<String> PROTOCOL = Arrays.asList("http://", "https://");
+	private static final String PROTOCOL = "^http\\:\\/\\/.+$";
 
 	/**
 	 * 压缩css,js帮助
@@ -50,8 +46,7 @@ public class AssetsKit {
 		try {
 			if (isCss) {
 				for (String path : fileList) {
-					String filePath = PathKit.getWebRootPath() + path;
-					in = new InputStreamReader(new FileInputStream(filePath), CHARSET);
+					in = new InputStreamReader(isRomte(path)? new URL(path).openStream():new FileInputStream(PathKit.getWebRootPath() + path), CHARSET);
 					if(path.indexOf(".min.") > 0 || isRomte(path)){// 对.min.css的css放弃压缩
 						out.append(repairCss(IOUtils.toString(in), path));
 					}else{
@@ -64,8 +59,7 @@ public class AssetsKit {
 				// nomunge: 混淆,verbose：显示信息消息和警告,preserveAllSemiColons：保留所有的分号 ,disableOptimizations 禁止优化
 				boolean munge = true, verbose = false, preserveAllSemiColons = false, disableOptimizations = false;
 				for (String path : fileList) {
-					String filePath = PathKit.getWebRootPath() + path;
-					in = new InputStreamReader(new FileInputStream(filePath), CHARSET);
+					in = new InputStreamReader(isRomte(path)? new URL(path).openStream():new FileInputStream(PathKit.getWebRootPath() + path), CHARSET);
 					if(path.indexOf(".min.") > 0 || isRomte(path)){ // 对.min.js的js放弃压缩
 						out.append(IOUtils.toString(in));
 					}else{
@@ -205,12 +199,8 @@ public class AssetsKit {
 		if(StrKit.isBlank(path)){
 			return false;
 		}
-		for(String protocul : PROTOCOL){
-			if(protocul.startsWith(path.trim())){
-				return true;
-			}
-		}
-		return false;
+		return path.trim().matches(PROTOCOL);
+
 	}
 
 }

@@ -5,6 +5,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,18 +23,43 @@ import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
-import sun.security.pkcs.EncodingException;
 
 /**
  * YUICompressor压缩帮助类
  * @author L.cm
  */
 public class AssetsKit {
-	
 	private static final Log log = Log.getLog(AssetsKit.class);
-	private static final String CHARSET = "UTF-8";
+	private static final Charset UTF_8 = Charset.forName("UTF-8");
 	private static final String JS_EXT = ".js", CSS_EXT = ".css";
-	private static final String PROTOCOL = "^http\\:\\/\\/.+$";
+	private static final String PROTOCOL = "^https?://.+$";
+
+	// 考虑到线上环境基本不会这么更改css,js文件为了性能故缓存
+	public static Map<String, String> COMBO_MAP = new ConcurrentHashMap<String, String>();
+
+	/**
+	 * 压缩工具
+	 * @param fileName 待压缩的文件列表文件 /assets/assets.jjs
+	 * @return String 返回压缩完成之后的路径
+	 * @throws IOException 文件不存在时异常
+	 */
+	public static String getPath(String fileName) throws IOException {
+		String rootPath = PathKit.getWebRootPath();
+		// 路径判读
+		if (!fileName.startsWith("/")) {
+			fileName = "/" + fileName;
+		}
+		String path = COMBO_MAP.get(fileName);
+		if (StrKit.isBlank(path)) {
+			return combo(rootPath, fileName);
+		}
+		File assetsFile = new File(rootPath + path);
+		// 待压缩的文件列表不存在时抛出异常
+		if (assetsFile.exists()) {
+			return path;
+		}
+		return combo(rootPath, fileName);
+	}
 
 	/**
 	 * 压缩css,js帮助
@@ -41,26 +68,33 @@ public class AssetsKit {
 	 * @param out 输出流
 	 * @throws IOException Io异常
 	 */
-	private static void compressorHelper(List<String> fileList, boolean isCss, Writer out) throws IOException {
+	private static void compressorHelper(String rootPath, List<String> fileList, boolean isCss, Writer out) throws IOException {
 		Reader in = null;
+		InputStream input = null;
 		try {
 			if (isCss) {
 				for (String path : fileList) {
-					in = new InputStreamReader(isRomte(path)? new URL(path).openStream():new FileInputStream(PathKit.getWebRootPath() + path), CHARSET);
-					if(path.indexOf(".min.") > 0 || isRomte(path)){// 对.min.css的css放弃压缩
-						out.append(repairCss(IOUtils.toString(in), path));
+					boolean isRomte = isRomte(path);
+					input = isRomte ? new URL(path).openStream() : new FileInputStream(rootPath + path);
+					in = new InputStreamReader(input, UTF_8);
+					// css 文件内容,并处理路径问题
+					String context = repairCss(IOUtils.toString(in), path);
+					if(path.indexOf(".min.") > 0 || isRomte){// 对.min.css的css放弃压缩
+						out.append(context);
 					}else{
-						CssCompressor css = new CssCompressor(new StringReader(repairCss(IOUtils.toString(in), path)));
-						in.close(); in = null;
+						CssCompressor css = new CssCompressor(new StringReader(context));
 						css.compress(out, -1);
 					}
+					in.close(); in = null;
 				}
 			}else{
 				// nomunge: 混淆,verbose：显示信息消息和警告,preserveAllSemiColons：保留所有的分号 ,disableOptimizations 禁止优化
 				boolean munge = true, verbose = false, preserveAllSemiColons = false, disableOptimizations = false;
 				for (String path : fileList) {
-					in = new InputStreamReader(isRomte(path)? new URL(path).openStream():new FileInputStream(PathKit.getWebRootPath() + path), CHARSET);
-					if(path.indexOf(".min.") > 0 || isRomte(path)){ // 对.min.js的js放弃压缩
+					boolean isRomte = isRomte(path);
+					input = isRomte ? new URL(path).openStream() : new FileInputStream(rootPath + path);
+					in = new InputStreamReader(input, UTF_8);
+					if(path.indexOf(".min.") > 0 || isRomte){ // 对.min.js,和远程js放弃压缩
 						out.append(IOUtils.toString(in));
 					}else{
 						JavaScriptCompressor compressor = new JavaScriptCompressor(in, new ErrorReporter() {
@@ -86,9 +120,9 @@ public class AssetsKit {
 								return new EvaluatorException(message);
 							}
 						});
-						in.close(); in = null;
 						compressor.compress(out, -1, munge, verbose, preserveAllSemiColons, disableOptimizations);
 					}
+					in.close(); in = null;
 				}
 			}
 			out.flush();
@@ -96,7 +130,7 @@ public class AssetsKit {
 			throw e;
 		}finally{
 			IOUtils.closeQuietly(in);
-			IOUtils.closeQuietly(out);
+			IOUtils.closeQuietly(input);
 		}
 	}
 	
@@ -124,22 +158,18 @@ public class AssetsKit {
 	/**
 	 * 压缩工具
 	 * @param fileName 待压缩的文件列表文件 /assets/assets.jjs
+	 * @param rootPath 项目路径
 	 * @return String 返回压缩完成之后的路径
 	 * @throws IOException 文件不存在时异常
 	 */
-	public static String combo(String fileName) throws IOException {
-		String rootPath = PathKit.getWebRootPath();
-		// 路径判读
-		if (!fileName.startsWith("/")) {
-			fileName = "/" + fileName;
-		}
+	private static String combo(String rootPath, String fileName) throws IOException {
 		File assetsConfig = new File(rootPath + fileName);
 		// 待压缩的文件列表不存在时抛出异常
 		if (!assetsConfig.exists()) {
 			throw new IOException(fileName + " not found...");
 		}
 		// 读取文件中的js或者css路径
-		List<String> list = FileUtils.readLines(assetsConfig, CHARSET);
+		List<String> list = FileUtils.readLines(assetsConfig, UTF_8);
 		StringBuilder fileMd5s = new StringBuilder(); // 文件更改时间拼接
 		for (String string : list) {
 			if (StrKit.isBlank(string)) {
@@ -160,7 +190,7 @@ public class AssetsKit {
 			if (!file.exists()) {
 				throw new IOException(file.getName() + " not found...");
 			}
-			String content = FileUtils.readFileToString(file, CHARSET);
+			String content = FileUtils.readFileToString(file, UTF_8);
 			fileMd5s.append(HashKit.md5(content));
 		}
 		// 文件更改时间集合hex，MD5取中间8位
@@ -180,12 +210,20 @@ public class AssetsKit {
 			return newFileName;
 		}
 		// 将合并的结果写入文件，异常时将文件删除
+		OutputStream output = null;
+		Writer out = null;
 		try {
-			Writer out = new OutputStreamWriter(new FileOutputStream(newPath), CHARSET);
-			compressorHelper(list, isCss, out);
+			output = new FileOutputStream(newPath);
+			out = new OutputStreamWriter(output, UTF_8);
+			compressorHelper(rootPath, list, isCss, out);
+			// 装载文件路径
+			COMBO_MAP.put(fileName, newFileName);
 		} catch (Exception e) {
 			FileUtils.deleteQuietly(file);
 			throw new RuntimeException(fileName + " 压缩异常，请检查是否有依赖问题！");
+		} finally {
+			IOUtils.closeQuietly(output);
+			IOUtils.closeQuietly(out);
 		}
 		return newFileName;
 	}
@@ -200,7 +238,6 @@ public class AssetsKit {
 			return false;
 		}
 		return path.trim().matches(PROTOCOL);
-
 	}
 
 }

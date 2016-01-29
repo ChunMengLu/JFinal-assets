@@ -37,7 +37,7 @@ public class AssetsTag extends TagSupport {
 			throw new JspException("assets tag attribute file can not be blank!");
 		}
 		try {
-			this.pageContext.setAttribute(var, AssetsKit.combo(file));
+			this.pageContext.setAttribute(var, AssetsKit.getPath(file));
 			return EVAL_BODY_INCLUDE;
 		} catch (IOException e) {
 			throw new JspException(e);

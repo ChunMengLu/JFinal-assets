@@ -43,7 +43,7 @@ public class AssetsDirective implements TemplateDirectiveModel {
 		if (StrKit.isBlank(fileName)) {
 			throw new TemplateModelException("assets tag attribute file can not be null!");
 		}
-		String path = AssetsKit.combo(fileName);
+		String path = AssetsKit.getPath(fileName);
 
 		BeansWrapper beansWrapper = new BeansWrapperBuilder(Configuration.VERSION_2_3_20).build();
 		env.setVariable(varName, beansWrapper.wrap(path));

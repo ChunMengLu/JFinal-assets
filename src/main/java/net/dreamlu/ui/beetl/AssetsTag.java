@@ -28,7 +28,7 @@ public class AssetsTag extends GeneralVarTagBinding {
 			throw new BeetlException("assets tag attribute file can not be null!");
 		}
 		try {
-			this.binds(AssetsKit.combo(fileName));
+			this.binds(AssetsKit.getPath(fileName));
 			this.doBodyRender();
 		} catch (Exception e) {
 			throw new RuntimeException(e);

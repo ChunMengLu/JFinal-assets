@@ -34,7 +34,7 @@ public class AssetsKit {
 	private static final String JS_EXT = ".js", CSS_EXT = ".css";
 	private static final String PROTOCOL = "^https?://.+$";
 
-	// 考虑到线上环境基本不会这么更改css,js文件为了性能故缓存
+	// 考虑到线上环境基本不会频繁更改css,js文件为了性能故缓存
 	public static Map<String, String> COMBO_MAP = new ConcurrentHashMap<String, String>();
 
 	/**
@@ -54,7 +54,7 @@ public class AssetsKit {
 			return combo(rootPath, fileName);
 		}
 		File assetsFile = new File(rootPath + path);
-		// 待压缩的文件列表不存在时抛出异常
+		// 文件存在则直接返回路径
 		if (assetsFile.exists()) {
 			return path;
 		}
@@ -63,6 +63,7 @@ public class AssetsKit {
 
 	/**
 	 * 压缩css,js帮助
+	 * @param rootPath 项目路径
 	 * @param fileList 合并压缩的文件列表
 	 * @param isCss 是否是css
 	 * @param out 输出流
@@ -85,6 +86,7 @@ public class AssetsKit {
 						CssCompressor css = new CssCompressor(new StringReader(context));
 						css.compress(out, -1);
 					}
+					input.close(); input = null;
 					in.close(); in = null;
 				}
 			}else{
@@ -122,6 +124,7 @@ public class AssetsKit {
 						});
 						compressor.compress(out, -1, munge, verbose, preserveAllSemiColons, disableOptimizations);
 					}
+					input.close(); input = null;
 					in.close(); in = null;
 				}
 			}

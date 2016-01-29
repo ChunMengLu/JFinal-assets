@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,7 +36,8 @@ public class AssetsKit {
 	private static final Log log = Log.getLog(AssetsKit.class);
 	private static final String CHARSET = "UTF-8";
 	private static final String JS_EXT = ".js", CSS_EXT = ".css";
-	
+	private static final List<String> PROTOCOL = Arrays.asList("http://", "https://");
+
 	/**
 	 * 压缩css,js帮助
 	 * @param fileList 合并压缩的文件列表
@@ -50,7 +52,7 @@ public class AssetsKit {
 				for (String path : fileList) {
 					String filePath = PathKit.getWebRootPath() + path;
 					in = new InputStreamReader(new FileInputStream(filePath), CHARSET);
-					if(path.indexOf(".min.") > 0){// 对.min.css的css放弃压缩
+					if(path.indexOf(".min.") > 0 || isRomte(path)){// 对.min.css的css放弃压缩
 						out.append(repairCss(IOUtils.toString(in), path));
 					}else{
 						CssCompressor css = new CssCompressor(new StringReader(repairCss(IOUtils.toString(in), path)));
@@ -64,7 +66,7 @@ public class AssetsKit {
 				for (String path : fileList) {
 					String filePath = PathKit.getWebRootPath() + path;
 					in = new InputStreamReader(new FileInputStream(filePath), CHARSET);
-					if(path.indexOf(".min.") > 0){ // 对.min.js的js放弃压缩
+					if(path.indexOf(".min.") > 0 || isRomte(path)){ // 对.min.js的js放弃压缩
 						out.append(IOUtils.toString(in));
 					}else{
 						JavaScriptCompressor compressor = new JavaScriptCompressor(in, new ErrorReporter() {
@@ -123,7 +125,8 @@ public class AssetsKit {
 		content = sb.toString();
 		return content;
 	}
-	
+
+
 	/**
 	 * 压缩工具
 	 * @param fileName 待压缩的文件列表文件 /assets/assets.jjs
@@ -150,8 +153,8 @@ public class AssetsKit {
 			}
 			// 去除首尾空格
 			string = string.trim();
-			// #开头的行注释
-			if (string.startsWith("#")) {
+			// #开头的行注释 或者 远程服务器上的资源文件
+			if (string.startsWith("#") || isRomte(string)) {
 				continue;
 			}
 			// 对错误地址修复
@@ -192,5 +195,22 @@ public class AssetsKit {
 		}
 		return newFileName;
 	}
-	
+
+	/**
+	 * 判断文件是否为远程资源文件,远程资源文件不进行压缩
+	 * @param path
+	 * @return
+	 */
+	private static boolean isRomte(String path){
+		if(StrKit.isBlank(path)){
+			return false;
+		}
+		for(String protocul : PROTOCOL){
+			if(protocul.startsWith(path.trim())){
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

@@ -18,3 +18,7 @@ Thumbs.db
 # Package Files #
 *.war
 *.ear
+
+# idea #
+.idea
+*.iml

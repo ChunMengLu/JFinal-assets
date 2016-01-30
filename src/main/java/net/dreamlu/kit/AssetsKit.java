@@ -35,7 +35,7 @@ public class AssetsKit {
 	private static final String PROTOCOL = "^https?://.+$";
 
 	// 考虑到线上环境基本不会频繁更改css,js文件为了性能故缓存
-	public static Map<String, String> COMBO_MAP = new ConcurrentHashMap<String, String>();
+	private static Map<String, String> COMBO_MAP = new ConcurrentHashMap<String, String>();
 
 	/**
 	 * 压缩工具

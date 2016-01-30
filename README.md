@@ -15,7 +15,7 @@ JFinal框架结合jsp、beetl、freemarker模版的js、css在线合并压缩插
 <dependency>
     <groupId>net.dreamlu</groupId>
     <artifactId>JFinal-assets</artifactId>
-    <version>0.0.2</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 

@@ -1,28 +1,25 @@
 package net.dreamlu.kit;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.FileFileFilter;
-import org.mozilla.javascript.ErrorReporter;
-import org.mozilla.javascript.EvaluatorException;
-
 import com.jfinal.kit.HashKit;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Log;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.mozilla.javascript.ErrorReporter;
+import org.mozilla.javascript.EvaluatorException;
+
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * YUICompressor压缩帮助类
@@ -77,9 +74,8 @@ public class AssetsKit {
 				for (String path : fileList) {
 					boolean isRomte = isRomte(path);
 					input = isRomte ? new URL(path).openStream() : new FileInputStream(rootPath + path);
-					in = new InputStreamReader(input, UTF_8);
 					// css 文件内容,并处理路径问题
-					String context = repairCss(IOUtils.toString(in), path);
+					String context = repairCss(IOUtils.toString(input, UTF_8), path);
 					if(path.indexOf(".min.") > 0 || isRomte){// 对.min.css的css放弃压缩
 						out.append(context);
 					}else{
@@ -87,7 +83,6 @@ public class AssetsKit {
 						css.compress(out, -1);
 					}
 					input.close(); input = null;
-					in.close(); in = null;
 				}
 			}else{
 				// nomunge: 混淆,verbose：显示信息消息和警告,preserveAllSemiColons：保留所有的分号 ,disableOptimizations 禁止优化
@@ -173,8 +168,11 @@ public class AssetsKit {
 		}
 		// 读取文件中的js或者css路径
 		List<String> list = FileUtils.readLines(assetsConfig, UTF_8);
-		StringBuilder fileMd5s = new StringBuilder(); // 文件更改时间拼接
+		// 文件内容md5
+		StringBuilder fileMd5s = new StringBuilder();
+		StringBuilder config = new StringBuilder();
 		for (String string : list) {
+			config.append(string);
 			if (StrKit.isBlank(string)) {
 				continue;
 			}
@@ -196,6 +194,8 @@ public class AssetsKit {
 			String content = FileUtils.readFileToString(file, UTF_8);
 			fileMd5s.append(HashKit.md5(content));
 		}
+		fileMd5s.append(HashKit.md5(config.toString()));
+
 		// 文件更改时间集合hex，MD5取中间8位
 		String hex = HashKit.md5(fileMd5s.toString()).substring(8, 16);
 		boolean isCss = true;
